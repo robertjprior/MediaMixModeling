@@ -1,0 +1,3 @@
+'''
+We have talked about optimizing spendings and how this was not possible with the old model. Well, with the new one it is, but I will not go into detail here. In short, treat our tuned_model a function and optimize it with a program of your choice, for example, Optuna or scipy.optimize.minimize. Add some budget constraints to the optimization, such as that the sum of spendings should be less than 1,000,000 in total.
+'''

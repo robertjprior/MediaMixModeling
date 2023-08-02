@@ -1,0 +1,100 @@
+Articles:
+Article 1 - https://towardsdatascience.com/an-upgraded-marketing-mix-modeling-in-python-5ebb3bddc1b6
+*Original intro to MMM
+
+Article 2 - https://towardsdatascience.com/bayesianmmm-state-of-the-art-media-mix-modelling-9207c4445757 
+* Also based off Google article but not super well done
+
+Article 3 - https://towardsdatascience.com/carryover-and-shape-effects-in-media-mix-modeling-paper-review-fd699b509e2d 
+* Looks like best replication of google article
+
+Article 4 - https://towardsdatascience.com/modeling-marketing-mix-using-pymc3-ba18dd9e6e68
+**a lot left to unpack here
+
+Transformer Functions:
+Saturation 1 - Article 1
+Saturation 2 - Article 4
+Saturation 3 - Article 3
+
+Carryover 1 - Article 1
+Carryover 2 - Article 2
+Carryover 3 - Article 3
+Carryover 4 - slight change on carryover 1
+
+Model 1_0: Carryover1, Saturation 1, (Original)
+Model 1_1: Carryover 1, Saturation 2
+Model 1_2: Carryover 2, Saturation 1 (Goole2)
+Model 1_3: Carryover 1, Saturation 3 (Original 2)
+Model 1_4: Carryover 2, Saturation 3 (Google2.6)
+Model 1_5: Carryover 3, Saturation 3 (Google3)
+Model 1_6: Carryover 4, Saturation 1
+Model 1_7: Carryover1, Saturation 1 (increased strength boundaries)
+model 1_8: Carryover 4, Saturation 3
+
+
+NOTES:
+1. we have to be careful of functional form with the unsaturated channels that we don't just completely turn that 0-100.
+It may soon saturate at a level just out of bounds of what we have seen. The best approach is to do some testing over time with slightly higher levels
+
+2. Add in other variables like seasonal control variables (can be developed with prophet) and price variables
+
+3. Can do testing with made up data (I think done in article 3)
+
+4. Can put this into the Pystan library to make this easier I think, not entirely sure of hte difference. I think it may just be better at optimizing hyperparams than Optuna
+
+5. There is some library in python than can also do budget optimization with legrange
+
+6. Scaling of exogenous variables can be important
+
+7. Article 4 talks about spend vs exposure if we don't have advertising spend but more just number
+of people exposed to the various types of marketing
+
+8. Test the scaling of the response variable between 0 and 1 or just divide by  x multiple of 10
+
+9. If we have a long time series, do we need to scale the impact of marketing $s to be nonlinear?
+
+10.  LOOK AT ROBYN OPENSOURCE LIBRARAY WHICH DOES THIS ALL
+
+11. Since Robyn additionally optimizes a business-relevant metric, it has fewer chances to generate a model that is statistically accurate but unrealistic from the marketing perspective
+
+12. BE AWARE OF RESPONSE DISTRIBUTION IF NOT NORMALLY DISTRIBUTED
+
+13. Check the distribution of hyperparams too easily with Pystan or equivalent from article 4
+
+14. evaluate with NRMSE (normalized Root Mean Squared Error - basically just RMSE) and MAPE (Mean Abs Percent Error) which will reflect different issues that could arise
+
+
+Visual Analysis:
+*Article 4 has a lot on this
+
+1. Weights across platforms
+2. saturation across platforms
+3. share of spend vs share of effect for each platform (normalized and non normalized)
+4. ROI
+5. Plot over time of true values with predicted as a time series where true points are just circles every once in a while
+
+
+
+Run 1:
+*notes are what we changed for the next run
+
+[0.7783394982405241,
+ 0.8385367554663122,
+ 0.7784308813319241,
+ 0.8584432135253146, -changed K from (0,1) to (0,2)
+ 0.7549447425306752,
+ 0.7945672935057452]
+
+ Run 2:
+ [0.7783394982405241,
+ 0.8385367554663122,
+ 0.7784308813319241,
+ 0.8606037008975005, -changed K from (0,2) to (0,3) &  S (0,1) to (0,2)
+ 0.7549447425306752,
+ 0.7945672935057452,
+ 0.8969458036278537,
+ 0.8294232460133437]
+ *new model 8 inherits model 4's changes
+ -started seeing variance from train to test go from 0.025 on avg for rest to 0.05 with model 7
+
+ 
